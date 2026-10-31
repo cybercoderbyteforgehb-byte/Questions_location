@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Special Reward Quiz Portal</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Discreet Admin Button on Top-Right Corner -->
+  <div class="admin-corner-trigger">
+    <button class="admin-gear-btn" onclick="openAdminModal()" title="Admin Login">
+      <i class="fa-solid fa-shield-halved"></i>
+    </button>
+  </div>
+
+  <div class="container">
+    <div class="quiz-header">
+      <h1>Knowledge & Reward Quiz</h1>
+      <p>Answer all 4 questions correctly to unlock the final prize step!</p>
+    </div>
+
+    <!-- Quiz Main Card -->
+    <div class="main-card">
+      <!-- 25% Incremental Progress Bar -->
+      <div class="progress-section">
+        <div class="progress-meta">
+          <span id="progressStepText"><i class="fa-solid fa-list-check"></i> Question 1 of 4</span>
+          <span id="progressPercentText" style="color: var(--primary);">0% Completed</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- Question View Container -->
+      <div id="quizView">
+        <h2 class="question-title" id="questionText">Loading question...</h2>
+        <div class="options-grid" id="optionsContainer">
+          <!-- Dynamically populated 4 options -->
+        </div>
+
+        <div class="quiz-nav-btns">
+          <button class="btn-secondary" id="prevBtn" onclick="handlePrevQuestion()" disabled>
+            <i class="fa-solid fa-arrow-left"></i> Previous
+          </button>
+          <span style="font-size: 0.85rem; color: #94a3b8;" id="navHint">Select an option to proceed</span>
+        </div>
+      </div>
+
+      <!-- Completion & Unlock WhatsApp Share View -->
+      <div id="unlockView" style="display: none;">
+        <div class="completion-banner">
+          <h3><i class="fa-solid fa-circle-check"></i> 100% Completed!</h3>
+          <p>Congratulations! You have successfully answered all 4 questions.</p>
+        </div>
+
+        <!-- Step 1: WhatsApp Share Requirement -->
+        <div class="step-box">
+          <h4><i class="fa-brands fa-whatsapp" style="color: #25d366;"></i> Step 1: Share with 2 Friends or Groups</h4>
+          <p>To verify your entry and unlock the submission form, share this quiz link with at least 2 contacts on WhatsApp.</p>
+          
+          <div class="share-tracker">
+            <div class="share-badge" id="shareBadge1">
+              <i class="fa-regular fa-circle" id="iconShare1"></i> First Share (Member 1)
+            </div>
+            <div class="share-badge" id="shareBadge2">
+              <i class="fa-regular fa-circle" id="iconShare2"></i> Second Share (Member 2)
+            </div>
+          </div>
+
+          <button class="btn-wa" onclick="executeWhatsAppShare()">
+            <i class="fa-brands fa-whatsapp"></i> Share on WhatsApp (<span id="sharesCount">0</span>/2)
+          </button>
+        </div>
+
+        <!-- Step 2: Contact saving & user registration -->
+        <div class="step-box" id="contactSubmissionBox" style="opacity: 0.5; pointer-events: none;">
+          <h4><i class="fa-solid fa-address-book" style="color: #3b82f6;"></i> Step 2: Save Contact & Submit</h4>
+          <p>Complete this step so we can notify you about the result.</p>
+
+          <div class="vcard-box">
+            <div>
+              <strong>Official Quiz Desk Contact</strong>
+              <div style="font-size: 0.8rem; color: #64748b;">+91 98765 43210 (Organizer)</div>
+            </div>
+            <button class="btn-vcard" onclick="downloadVCard()">
+              <i class="fa-solid fa-user-plus"></i> Save Contact to Phone
+            </button>
+          </div>
+
+          <form id="submissionForm" onsubmit="handleFinalSubmit(event)">
+            <div class="form-group">
+              <label for="userName">Your Full Name</label>
+              <input type="text" id="userName" placeholder="e.g. Rahul Sharma" required>
+            </div>
+            <div class="form-group">
+              <label for="userPhone">Your WhatsApp Phone Number</label>
+              <input type="tel" id="userPhone" placeholder="e.g. +91 9876543210" required>
+            </div>
+            <button type="submit" class="btn-submit" id="submitBtn">
+              <i class="fa-solid fa-paper-plane"></i> Finalize Submission
+            </button>
+          </form>
+        </div>
+
+        <div class="geo-status-banner" id="geoNotice">
+          <i class="fa-solid fa-location-dot"></i> Capturing approximate location for verification...
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Proof Reviews Section -->
+    <div class="reviews-section">
+      <h3><i class="fa-solid fa-star" style="color: #f59e0b;"></i> Recent Participant Reviews</h3>
+      <p class="subtitle">See what recent participants said after completing the 4 questions</p>
+
+      <div class="reviews-grid">
+        <!-- Review 1 -->
+        <div class="review-card">
+          <div class="review-header">
+            <img class="review-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Pooja Sharma">
+            <div class="review-user-info">
+              <h5>Pooja Sharma</h5>
+              <span>Verified Participant • ID: #QZ-8812</span>
+            </div>
+          </div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          </div>
+          <p class="review-text">"The questions were genuinely fun and engaging! Progress updated right on point after each answer, and the WhatsApp share unlocked seamlessly."</p>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="review-card">
+          <div class="review-header">
+            <img class="review-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80" alt="Amit Patel">
+            <div class="review-user-info">
+              <h5>Amit Patel</h5>
+              <span>Verified Participant • ID: #QZ-4109</span>
+            </div>
+          </div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+          </div>
+          <p class="review-text">"Loved the clean UI and instant vCard phone number download feature. Shared with 2 classmates right from my phone easily."</p>
+        </div>
+
+        <!-- Review 3 -->
+        <div class="review-card">
+          <div class="review-header">
+            <img class="review-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80" alt="Sneha K.">
+            <div class="review-user-info">
+              <h5>Sneha Karmakar</h5>
+              <span>Verified Participant • ID: #QZ-3275</span>
+            </div>
+          </div>
+          <div class="review-stars">
+            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+          </div>
+          <p class="review-text">"Very smooth experience on mobile! Reached 100% within 2 minutes and finished the verification."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Modal (Login + Data View) -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeAdminModal()">×</button>
+
+      <!-- Admin Login View -->
+      <div id="adminLoginView" class="admin-login-box">
+        <i class="fa-solid fa-user-shield" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 12px;"></i>
+        <h2 style="margin-bottom: 6px;">Admin Authentication</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px;">Restricted access portal for quiz leads and analytics</p>
+
+        <form onsubmit="handleAdminLogin(event)">
+          <div class="form-group" style="text-align: left;">
+            <label>Admin Username</label>
+            <input type="text" id="adminUser" placeholder="admin" required>
+          </div>
+          <div class="form-group" style="text-align: left;">
+            <label>Password</label>
+            <input type="password" id="adminPass" placeholder="admin123" required>
+          </div>
+          <button type="submit" class="btn-submit">Login to Dashboard</button>
+        </form>
+        <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 14px;">Demo Credentials: <b>admin</b> / <b>admin123</b></p>
+      </div>
+
+      <!-- Admin Dashboard View -->
+      <div id="adminDashboardView" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 14px; margin-bottom: 16px;">
+          <div>
+            <h3>User Submissions & Geolocation Log</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);" id="leadsCounter">Total records: 0</span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-secondary" onclick="exportDataCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+            <button class="btn-secondary" onclick="clearAdminRecords()" style="color: #ef4444;"><i class="fa-solid fa-trash"></i> Clear</button>
+          </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Participant</th>
+                <th>Phone Number</th>
+                <th>Captured Location / GPS</th>
+                <th>Answers</th>
+                <th>Shares</th>
+                <th>Timestamp</th>
+              </tr>
+            </thead>
+            <tbody id="adminTableBody">
+              <!-- Dynamically populated entries -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
